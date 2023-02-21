@@ -10,7 +10,6 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="bash" target="1.5" />
       <module name="shellin" target="1.5" />
     </bytecodeTargetLevel>
   </component>
