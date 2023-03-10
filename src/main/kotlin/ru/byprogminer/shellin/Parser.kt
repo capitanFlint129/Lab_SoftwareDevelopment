@@ -1,9 +1,6 @@
 package ru.byprogminer.shellin
 
-import ru.byprogminer.shellin.command.AssignCommand
-import ru.byprogminer.shellin.command.Command
-import ru.byprogminer.shellin.command.PipelineCommand
-import ru.byprogminer.shellin.command.SystemCommand
+import ru.byprogminer.shellin.command.*
 import java.io.BufferedInputStream
 import java.io.EOFException
 import java.nio.ByteBuffer
@@ -14,14 +11,21 @@ class Parser(
     private val state: State,
 ) {
 
-    companion object {
+    private companion object {
 
         const val READ_LINE_BUFFER_SIZE = 1024
 
         val VARIABLE_REGEX = "\\\$([a-zA-Z_]\\w*)".toRegex()
         val ASSIGNMENT_REGEX = "([a-zA-Z_]\\w*)=(.*)".toRegex()
 
-        val INTERNAL_COMMANDS = mapOf<String, (args: List<String>) -> Command>()
+        val INTERNAL_COMMANDS = mapOf(
+            "cat" to ::CatCommand,
+            "echo" to ::EchoCommand,
+            "wc" to ::WcCommand,
+            "pwd" to ::PwdCommand,
+            "cd" to ::CdCommand,
+            "exit" to ::ExitCommand,
+        )
     }
 
     /**
@@ -213,6 +217,9 @@ class Parser(
         while (true) {
             val pos = buffer.position()
 
+            // assert invariant
+            require(buffer.hasRemaining())
+
             // mark current position to reset to when line will read
             input.mark(buffer.remaining())
 
@@ -220,7 +227,8 @@ class Parser(
             val wasRead = channel.read(buffer)
 
             // if EOF - there isn't any line, return null
-            if (wasRead == 0) {
+            // this isn't exactly -1 to prevent infinite loop
+            if (wasRead <= 0) {
                 return null
             }
 

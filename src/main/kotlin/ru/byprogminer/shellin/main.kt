@@ -13,18 +13,25 @@ fun main() {
 
     val input = BufferedInputStream(System.`in`)
     val output = System.out
+    val error = System.err
 
     while (state.work) {
         output.print(PROMPT)
         output.flush()
 
-        try {
-            val command = parser.parse(input) ?: continue
-            runner.exec(command, input, output)
+        val command = try {
+            parser.parse(input) ?: continue
         } catch (e: EOFException) {
-            // TODO
+            state.stop()
+            continue
+        }
+
+        try {
+            runner.exec(command, input, output, error)
         } catch (e: Exception) {
             TODO()
         }
     }
+
+    output.println("exit")
 }
