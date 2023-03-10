@@ -13,6 +13,10 @@ class EchoCommand(
     private val args: List<String>,
 ) : Command {
 
+    init {
+        require(args.isNotEmpty())
+    }
+
     override fun exec(input: InputStream, output: OutputStream, error: OutputStream, state: State) {
         val result = args.subList(1, args.size).joinToString(" ")
         PrintStream(output).println(result)

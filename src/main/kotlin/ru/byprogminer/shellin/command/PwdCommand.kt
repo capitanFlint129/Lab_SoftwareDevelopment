@@ -13,6 +13,10 @@ class PwdCommand(
     private val args: List<String>,
 ) : Command {
 
+    init {
+        require(args.isNotEmpty())
+    }
+
     override fun exec(input: InputStream, output: OutputStream, error: OutputStream, state: State) {
         if (args.size > 1) {
             PrintStream(error).println("Too many arguments.")

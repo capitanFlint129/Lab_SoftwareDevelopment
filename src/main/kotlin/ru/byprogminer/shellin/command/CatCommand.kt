@@ -17,6 +17,10 @@ class CatCommand(
     private val args: List<String>,
 ) : Command {
 
+    init {
+        require(args.isNotEmpty())
+    }
+
     override fun exec(input: InputStream, output: OutputStream, error: OutputStream, state: State) {
         if (args.size != 2) {
             PrintStream(output).println("Usage: ${args[0]} <FILE>")

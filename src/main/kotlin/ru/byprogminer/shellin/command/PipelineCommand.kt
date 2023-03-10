@@ -13,6 +13,10 @@ class PipelineCommand(
     private val commands: List<Command>,
 ) : Command {
 
+    init {
+        require(commands.size > 1)
+    }
+
     override fun exec(input: InputStream, output: OutputStream, error: OutputStream, state: State) {
         TODO("Not yet implemented")
     }

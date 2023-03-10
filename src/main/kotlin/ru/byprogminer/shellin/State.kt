@@ -1,8 +1,10 @@
 package ru.byprogminer.shellin
 
+import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.absolute
 
 
 class State(
@@ -18,6 +20,14 @@ class State(
          * Name of current working directory environment variable.
          */
         const val PWD_VARIABLE = "PWD"
+
+        /**
+         * Name of path environment variable.
+         */
+        val PATH_VARIABLE = when (System.getProperty("os.name").contains("Windows", true)) {
+            true -> "Path"
+            else -> "PATH"
+        }
     }
 
     /**
@@ -34,8 +44,15 @@ class State(
         get() = Paths.get(environment.getOrDefault(PWD_VARIABLE, ""))
         set(value) {
             require(Files.isDirectory(value)) { "PWD must be directory" }
-            environment[PWD_VARIABLE] = value.toAbsolutePath().normalize().toString()
+            environment[PWD_VARIABLE] = value.absolute().normalize().toString()
         }
+
+    /**
+     * Helper accessor to PATH environment variable.
+     */
+    val path: List<Path>
+        get() = environment.getOrDefault(PATH_VARIABLE, "")
+            .split(File.pathSeparator).map(Paths::get)
 
     /**
      * Set [work] to false

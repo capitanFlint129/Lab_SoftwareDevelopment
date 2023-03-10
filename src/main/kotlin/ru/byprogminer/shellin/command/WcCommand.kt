@@ -10,6 +10,9 @@ import java.nio.file.Files
 import java.nio.file.NoSuchFileException
 
 
+/**
+ * Count lines, words and bytes in file specified by argument.
+ */
 class WcCommand(
     private val args: List<String>,
 ) : Command {
@@ -17,6 +20,10 @@ class WcCommand(
     private companion object {
 
         const val BUFFER_SIZE = 4096
+    }
+
+    init {
+        require(args.isNotEmpty())
     }
 
     override fun exec(input: InputStream, output: OutputStream, error: OutputStream, state: State) {
@@ -42,6 +49,12 @@ class WcCommand(
         }
     }
 
+    /**
+     * Count lines, words and bytes in input stream.
+     *
+     * @param stream input stream to count
+     * @return triple of lines, words and bytes amount
+     */
     private fun wc(stream: InputStream): Triple<Int, Int, Int> {
         var lines = 0
         var words = 0
