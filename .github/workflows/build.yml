@@ -24,8 +24,4 @@ jobs:
     steps:
 
       - name: Build
-        with:
-          java-version: '11'
-          distribution: 'adopt'
-
-      - run: mvnw clean package
+        run: mvnw clean package
