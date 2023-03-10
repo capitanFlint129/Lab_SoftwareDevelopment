@@ -7,6 +7,9 @@ import java.nio.file.Paths
 import kotlin.io.path.absolute
 
 
+/**
+ * Class with the state of application.
+ */
 class State(
     /**
      * Environment variables map.

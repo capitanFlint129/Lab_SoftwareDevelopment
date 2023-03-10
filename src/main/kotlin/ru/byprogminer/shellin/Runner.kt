@@ -5,6 +5,9 @@ import java.io.BufferedInputStream
 import java.io.PrintStream
 
 
+/**
+ * Runner. Runs commands with the saved state.
+ */
 class Runner(
     private val state: State,
 ) {

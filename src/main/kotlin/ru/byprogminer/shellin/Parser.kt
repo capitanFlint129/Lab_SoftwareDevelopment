@@ -7,6 +7,9 @@ import java.nio.ByteBuffer
 import java.nio.channels.Channels
 
 
+/**
+ * Parses commands from the input stream and substitute variables from environment.
+ */
 class Parser(
     private val state: State,
 ) {

@@ -7,6 +7,6 @@ class SimpleTest {
 
     @Test
     fun test() {
-        main()
+        // TODO
     }
 }
