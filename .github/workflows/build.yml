@@ -18,6 +18,8 @@ jobs:
         os: [ macos-latest, ubuntu-latest ]
 
     steps:
+      - uses: actions/checkout@v3
+
       - name: Build
         run: ./mvnw clean package
         shell: bash
@@ -30,6 +32,8 @@ jobs:
         os: [ windows-latest ]
 
     steps:
+      - uses: actions/checkout@v3
+
       - name: Build
         run: mvnw.cmd clean package
         shell: cmd
