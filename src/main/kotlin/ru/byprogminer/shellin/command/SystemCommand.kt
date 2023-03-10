@@ -72,12 +72,16 @@ class SystemCommand(
             }
         }
 
-        process.waitFor()
+        val exitCode = process.waitFor()
         outputThread.join()
         errorThread.join()
 
         // we mustn't join thread for input stream because it will stop only when
         // user print something after process finished
+
+        if (exitCode != 0) {
+            error.println("Process exited with code $exitCode")
+        }
     }
 
     /**
