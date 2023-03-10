@@ -1,6 +1,7 @@
 package ru.byprogminer.shellin
 
 import java.io.BufferedInputStream
+import java.io.EOFException
 
 
 private const val PROMPT = "> "
@@ -18,8 +19,10 @@ fun main() {
         output.flush()
 
         try {
-            val command = parser.parse(input)
+            val command = parser.parse(input) ?: continue
             runner.exec(command, input, output)
+        } catch (e: EOFException) {
+            // TODO
         } catch (e: Exception) {
             TODO()
         }
