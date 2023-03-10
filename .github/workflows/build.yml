@@ -5,8 +5,8 @@ name: build
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the dev branch
-  push:
-    branches: [ lab1-dev-1 ]
+  # push:
+  #   branches: [ lab1-dev-1 ]
   pull_request:
     branches: [ master ]
 
@@ -24,4 +24,4 @@ jobs:
     steps:
 
       - name: Build
-        run: mvnw clean package
+        run: ./mvnw clean package
