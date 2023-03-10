@@ -26,7 +26,9 @@ class CatCommand(
         val path = state.pwd.resolve(args[1])
 
         try {
-            Files.newInputStream(path).copyTo(output)
+            Files.newInputStream(path).use {
+                it.copyTo(output)
+            }
         } catch (e: NoSuchFileException) {
             PrintStream(error).println("File not found: \"$path\".")
         } catch (e: AccessDeniedException) {
