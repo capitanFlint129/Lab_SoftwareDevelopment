@@ -2,7 +2,6 @@ package ru.byprogminer.shellin.command
 
 import ru.byprogminer.shellin.State
 import java.io.BufferedInputStream
-import java.io.OutputStream
 import java.io.PrintStream
 
 
@@ -17,9 +16,9 @@ class ExitCommand(
         require(args.isNotEmpty())
     }
 
-    override fun exec(input: BufferedInputStream, output: OutputStream, error: OutputStream, state: State) {
+    override fun exec(input: BufferedInputStream, output: PrintStream, error: PrintStream, state: State) {
         if (args.size > 1) {
-            PrintStream(error).println("Too many arguments.")
+            error.println("Too many arguments.")
             return
         }
 

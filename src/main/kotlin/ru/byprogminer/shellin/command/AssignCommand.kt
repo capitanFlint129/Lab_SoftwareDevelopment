@@ -2,7 +2,7 @@ package ru.byprogminer.shellin.command
 
 import ru.byprogminer.shellin.State
 import java.io.BufferedInputStream
-import java.io.OutputStream
+import java.io.PrintStream
 
 
 /**
@@ -15,7 +15,7 @@ class AssignCommand(
     private val command: Command?,
 ) : Command {
 
-    override fun exec(input: BufferedInputStream, output: OutputStream, error: OutputStream, state: State) {
+    override fun exec(input: BufferedInputStream, output: PrintStream, error: PrintStream, state: State) {
         if (command == null) {
             state.environment[variable] = value
             return

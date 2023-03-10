@@ -2,7 +2,6 @@ package ru.byprogminer.shellin.command
 
 import ru.byprogminer.shellin.State
 import java.io.BufferedInputStream
-import java.io.OutputStream
 import java.io.PrintStream
 import java.nio.file.Paths
 
@@ -21,16 +20,16 @@ class CdCommand(
         require(args.isNotEmpty())
     }
 
-    override fun exec(input: BufferedInputStream, output: OutputStream, error: OutputStream, state: State) {
+    override fun exec(input: BufferedInputStream, output: PrintStream, error: PrintStream, state: State) {
         if (args.size > 2) {
-            PrintStream(error).println("Too many arguments.")
+            error.println("Too many arguments.")
             return
         }
 
         if (args.size == 1) {
             val home = System.getProperty("user.home")
 
-            PrintStream(output).println(home)
+            output.println(home)
             state.pwd = Paths.get(home)
             return
         }
@@ -38,7 +37,7 @@ class CdCommand(
         try {
             state.pwd = state.pwd.resolve(args[1])
         } catch (e: IllegalArgumentException) {
-            PrintStream(error).println("\"${args[1]}\" is not a directory.")
+            error.println("\"${args[1]}\" is not a directory.")
         }
     }
 }

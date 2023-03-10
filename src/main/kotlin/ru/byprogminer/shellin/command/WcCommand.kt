@@ -1,7 +1,10 @@
 package ru.byprogminer.shellin.command
 
 import ru.byprogminer.shellin.State
-import java.io.*
+import java.io.BufferedInputStream
+import java.io.IOException
+import java.io.InputStream
+import java.io.PrintStream
 import java.nio.file.AccessDeniedException
 import java.nio.file.Files
 import java.nio.file.NoSuchFileException
@@ -23,9 +26,9 @@ class WcCommand(
         require(args.isNotEmpty())
     }
 
-    override fun exec(input: BufferedInputStream, output: OutputStream, error: OutputStream, state: State) {
+    override fun exec(input: BufferedInputStream, output: PrintStream, error: PrintStream, state: State) {
         if (args.size != 2) {
-            PrintStream(output).println("Usage: ${args[0]} <FILE>")
+            output.println("Usage: ${args[0]} <FILE>")
             return
         }
 
@@ -35,14 +38,14 @@ class WcCommand(
             Files.newInputStream(path).use {
                 val (lines, words, bytes) = wc(it)
 
-                PrintStream(output).println("$lines\t$words\t$bytes\t${args[1]}")
+                output.println("$lines\t$words\t$bytes\t${args[1]}")
             }
         } catch (e: NoSuchFileException) {
-            PrintStream(error).println("File not found: \"$path\".")
+            error.println("File not found: \"$path\".")
         } catch (e: AccessDeniedException) {
-            PrintStream(error).println("Access denied: \"$path\".")
+            error.println("Access denied: \"$path\".")
         } catch (e: IOException) {
-            PrintStream(error).println("Cannot read file: \"${e.localizedMessage}\".")
+            error.println("Cannot read file: \"${e.localizedMessage}\".")
         }
     }
 

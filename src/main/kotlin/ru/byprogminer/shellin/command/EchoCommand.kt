@@ -2,7 +2,6 @@ package ru.byprogminer.shellin.command
 
 import ru.byprogminer.shellin.State
 import java.io.BufferedInputStream
-import java.io.OutputStream
 import java.io.PrintStream
 
 
@@ -17,8 +16,8 @@ class EchoCommand(
         require(args.isNotEmpty())
     }
 
-    override fun exec(input: BufferedInputStream, output: OutputStream, error: OutputStream, state: State) {
+    override fun exec(input: BufferedInputStream, output: PrintStream, error: PrintStream, state: State) {
         val result = args.subList(1, args.size).joinToString(" ")
-        PrintStream(output).println(result)
+        output.println(result)
     }
 }

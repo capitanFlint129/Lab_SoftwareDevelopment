@@ -4,6 +4,7 @@ import ru.byprogminer.shellin.State
 import java.io.BufferedInputStream
 import java.io.IOException
 import java.io.OutputStream
+import java.io.PrintStream
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -27,7 +28,7 @@ class SystemCommand(
         require(args.isNotEmpty())
     }
 
-    override fun exec(input: BufferedInputStream, output: OutputStream, error: OutputStream, state: State) {
+    override fun exec(input: BufferedInputStream, output: PrintStream, error: PrintStream, state: State) {
         val cmdArray = args.toTypedArray()
 
         // we must do that because JVM don't provide access to run apps from specified PATH...

@@ -28,8 +28,12 @@ fun main() {
 
         try {
             runner.exec(command, input, output, error)
+        } catch (e: IllegalArgumentException) {
+            error.println(e.localizedMessage)
+        } catch (e: IOException) {
+            error.println("I/O error occurred:\n${e.localizedMessage}")
         } catch (e: Exception) {
-            TODO()
+            error.println("Unexpected error:\n$e")
         }
     }
 
