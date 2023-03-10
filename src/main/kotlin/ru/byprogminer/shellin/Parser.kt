@@ -1,6 +1,9 @@
 package ru.byprogminer.shellin
 
+import ru.byprogminer.shellin.command.AssignCommand
 import ru.byprogminer.shellin.command.Command
+import ru.byprogminer.shellin.command.PipelineCommand
+import ru.byprogminer.shellin.command.SystemCommand
 import java.io.BufferedInputStream
 import java.io.EOFException
 import java.nio.ByteBuffer
@@ -16,6 +19,9 @@ class Parser(
         const val READ_LINE_BUFFER_SIZE = 1024
 
         val VARIABLE_REGEX = "\\\$([a-zA-Z_]\\w*)".toRegex()
+        val ASSIGNMENT_REGEX = "([a-zA-Z_]\\w*)=(.*)".toRegex()
+
+        val INTERNAL_COMMANDS = mapOf<String, (args: List<String>) -> Command>()
     }
 
     /**
@@ -39,15 +45,54 @@ class Parser(
             return commands[0]
         }
 
-        TODO("pipeline command")
-    }
+        val pipelineCommands = try {
+            commands.requireNoNulls()
+        } catch (e: IllegalArgumentException) {
+            throw IllegalArgumentException("empty command in pipeline")
+        }
 
-    private fun buildCommand(chunks: List<String>): Command? {
-        TODO()
+        return PipelineCommand(pipelineCommands)
     }
 
     /**
-     * Prepare line according to algorithm described in architecture notes.
+     * Builds [Command] object from the list of arguments.
+     *
+     * If the list of arguments is empty, returns `null`.
+     * Otherwise, the first argument is the name of command.
+     *
+     * - if the name according to [ASSIGNMENT_REGEX], it is treated as [AssignCommand]
+     * - if the name specified in [INTERNAL_COMMANDS], it is treated as according internal command
+     * - otherwise, it is treated as [SystemCommand]
+     *
+     * @param args arguments list
+     * @return command or `null` if arguments list is empty
+     */
+    private fun buildCommand(args: List<String>): Command? {
+        if (args.isEmpty()) {
+            return null
+        }
+
+        val name = args[0]
+
+        val assignmentMatch = ASSIGNMENT_REGEX.matchEntire(name)
+        if (assignmentMatch != null) {
+            return AssignCommand(
+                variable = assignmentMatch.groups[1]!!.value,
+                value = assignmentMatch.groups[2]!!.value,
+                command = buildCommand(args.subList(1, args.size)),
+            )
+        }
+
+        val internalCommand = INTERNAL_COMMANDS[name]
+        if (internalCommand != null) {
+            return internalCommand(args)
+        }
+
+        return SystemCommand(args)
+    }
+
+    /**
+     * Prepare line according to the algorithm described in the architecture notes.
      *
      * Returned pipeline always has at least one command.
      * Commands in pipeline could be empty lists.
@@ -139,17 +184,14 @@ class Parser(
     /**
      * Substitutes variables in string.
      *
-     * Variable is substring that fits a [VARIABLE_REGEX].
+     * Variable is substring that according to a [VARIABLE_REGEX].
      * Variables are replacing with values from [state] or empty string if there isn't suitable variable.
      *
      * @param str string to substitute variables in
      * @return substitution result
      */
     private fun substituteVariables(str: String) = VARIABLE_REGEX.replace(str) { match ->
-        val name = match.groups[1]?.value
-
-        requireNotNull(name) { "bad regex" }
-        return@replace state.environment.getOrDefault(name, "")
+        state.environment.getOrDefault(match.groups[1]!!.value, "")
     }
 
     /**
