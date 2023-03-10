@@ -1,7 +1,7 @@
 package ru.byprogminer.shellin
 
 import java.io.BufferedInputStream
-import java.io.EOFException
+import java.io.IOException
 
 
 private const val PROMPT = "> "
@@ -21,7 +21,7 @@ fun main() {
 
         val command = try {
             parser.parse(input) ?: continue
-        } catch (e: EOFException) {
+        } catch (e: IOException) {
             state.stop()
             continue
         }

@@ -4,7 +4,6 @@ import ru.byprogminer.shellin.State
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.PrintStream
-import java.nio.file.Files
 import java.nio.file.Paths
 
 
@@ -18,11 +17,6 @@ class CdCommand(
     private val args: List<String>,
 ) : Command {
 
-    private companion object {
-
-        const val PWD_VARIABLE = "PWD"
-    }
-
     override fun exec(input: InputStream, output: OutputStream, error: OutputStream, state: State) {
         if (args.size > 2) {
             PrintStream(error).println("Too many arguments.")
@@ -33,18 +27,14 @@ class CdCommand(
             val home = System.getProperty("user.home")
 
             PrintStream(output).println(home)
-            state.environment[PWD_VARIABLE] = home
+            state.pwd = Paths.get(home)
             return
         }
 
-        val pwd = state.environment.getOrDefault(PWD_VARIABLE, "")
-        val newPath = Paths.get(pwd).resolve(args[1])
-
-        if (!Files.isDirectory(newPath)) {
-            PrintStream(error).println("$newPath is not a directory.")
-            return
+        try {
+            state.pwd = state.pwd.resolve(args[1])
+        } catch (e: IllegalArgumentException) {
+            PrintStream(error).println("\"${args[1]}\" is not a directory.")
         }
-
-        state.environment[PWD_VARIABLE] = newPath.toAbsolutePath().normalize().toString()
     }
 }

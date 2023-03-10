@@ -13,18 +13,12 @@ class PwdCommand(
     private val args: List<String>,
 ) : Command {
 
-    private companion object {
-
-        const val PWD_VARIABLE = "PWD"
-    }
-
     override fun exec(input: InputStream, output: OutputStream, error: OutputStream, state: State) {
         if (args.size > 1) {
             PrintStream(error).println("Too many arguments.")
             return
         }
 
-        val pwd = state.environment.getOrDefault(PWD_VARIABLE, "")
-        PrintStream(output).println(pwd)
+        PrintStream(output).println(state.pwd)
     }
 }
