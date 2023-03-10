@@ -110,7 +110,7 @@ class StateTest {
         val state2 = state1.copy()
 
         assertFalse(state2.work)
-        assertEquals(mutableMapOf("123" to "345"), state2.environment)
+        assertEquals(mapOf("123" to "345"), state2.environment)
     }
 
     @Test
@@ -124,8 +124,8 @@ class StateTest {
 
         state2.environment["123"] = "321"
 
-        assertEquals(mutableMapOf("123" to "345"), state1.environment)
-        assertEquals(mutableMapOf("123" to "321"), state2.environment)
+        assertEquals(mapOf("123" to "345"), state1.environment)
+        assertEquals(mapOf("123" to "321"), state2.environment)
     }
 
     @Test
@@ -139,7 +139,7 @@ class StateTest {
 
         state1.environment["123"] = "321"
 
-        assertEquals(mutableMapOf("123" to "321"), state1.environment)
-        assertEquals(mutableMapOf("123" to "345"), state2.environment)
+        assertEquals(mapOf("123" to "321"), state1.environment)
+        assertEquals(mapOf("123" to "345"), state2.environment)
     }
 }
