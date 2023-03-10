@@ -1,7 +1,7 @@
 package ru.byprogminer.shellin.command
 
 import ru.byprogminer.shellin.State
-import java.io.InputStream
+import java.io.BufferedInputStream
 import java.io.OutputStream
 import java.io.PrintStream
 import java.nio.file.Paths
@@ -21,7 +21,7 @@ class CdCommand(
         require(args.isNotEmpty())
     }
 
-    override fun exec(input: InputStream, output: OutputStream, error: OutputStream, state: State) {
+    override fun exec(input: BufferedInputStream, output: OutputStream, error: OutputStream, state: State) {
         if (args.size > 2) {
             PrintStream(error).println("Too many arguments.")
             return

@@ -1,8 +1,8 @@
 package ru.byprogminer.shellin.command
 
 import ru.byprogminer.shellin.State
+import java.io.BufferedInputStream
 import java.io.IOException
-import java.io.InputStream
 import java.io.OutputStream
 import java.io.PrintStream
 import java.nio.file.AccessDeniedException
@@ -21,7 +21,7 @@ class CatCommand(
         require(args.isNotEmpty())
     }
 
-    override fun exec(input: InputStream, output: OutputStream, error: OutputStream, state: State) {
+    override fun exec(input: BufferedInputStream, output: OutputStream, error: OutputStream, state: State) {
         if (args.size != 2) {
             PrintStream(output).println("Usage: ${args[0]} <FILE>")
             return

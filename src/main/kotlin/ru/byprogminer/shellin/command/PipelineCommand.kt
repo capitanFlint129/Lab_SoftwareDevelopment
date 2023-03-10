@@ -1,7 +1,7 @@
 package ru.byprogminer.shellin.command
 
 import ru.byprogminer.shellin.State
-import java.io.InputStream
+import java.io.BufferedInputStream
 import java.io.OutputStream
 
 
@@ -17,7 +17,7 @@ class PipelineCommand(
         require(commands.size > 1)
     }
 
-    override fun exec(input: InputStream, output: OutputStream, error: OutputStream, state: State) {
+    override fun exec(input: BufferedInputStream, output: OutputStream, error: OutputStream, state: State) {
         TODO("Not yet implemented")
     }
 }

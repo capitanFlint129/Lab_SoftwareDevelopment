@@ -1,8 +1,8 @@
 package ru.byprogminer.shellin.command
 
 import ru.byprogminer.shellin.State
-import java.io.InputStream
-import java.io.InterruptedIOException
+import java.io.BufferedInputStream
+import java.io.IOException
 import java.io.OutputStream
 import java.nio.file.Files
 import java.nio.file.Path
@@ -18,11 +18,16 @@ class SystemCommand(
     private val args: List<String>,
 ) : Command {
 
+    private companion object {
+
+        const val BUFFER_SIZE = 4096
+    }
+
     init {
         require(args.isNotEmpty())
     }
 
-    override fun exec(input: InputStream, output: OutputStream, error: OutputStream, state: State) {
+    override fun exec(input: BufferedInputStream, output: OutputStream, error: OutputStream, state: State) {
         val cmdArray = args.toTypedArray()
 
         // we must do that because JVM don't provide access to run apps from specified PATH...
@@ -34,44 +39,88 @@ class SystemCommand(
             state.pwd.toFile(),
         )
 
-        val inputThread = thread {
+        // all of these threads will ends with process automatically
+
+        thread {
             try {
-                input.copyTo(process.outputStream)
-            } catch (e: InterruptedIOException) {
-                // ignore
+                process.outputStream.use {
+                    transferToProcess(input, it)
+                }
+            } catch (e: IOException) {
+                // ignored
             }
         }
 
         val outputThread = thread {
             try {
-                process.inputStream.copyTo(output)
-            } catch (e: InterruptedIOException) {
-                // ignore
+                process.inputStream.use {
+                    it.copyTo(output)
+                }
+            } catch (e: IOException) {
+                // ignored
             }
         }
 
         val errorThread = thread {
             try {
-                process.errorStream.copyTo(error)
-            } catch (e: InterruptedIOException) {
-                // ignore
+                process.errorStream.use {
+                    it.copyTo(error)
+                }
+            } catch (e: IOException) {
+                // ignored
             }
         }
 
-        try {
-            process.waitFor()
-        } finally {
-            // TODO async IO will be better solution but it requires change all architecture =)
+        process.waitFor()
+        outputThread.join()
+        errorThread.join()
 
-            Thread.yield()
+        // we mustn't join thread for input stream because it will stop only when
+        // user print something after process finished
+    }
 
-            inputThread.stop()
-            outputThread.stop()
-            errorThread.stop()
+    /**
+     * Transfers our input stream to another process with prior to
+     * preserve bytes after process exit.
+     */
+    private fun transferToProcess(self: BufferedInputStream, other: OutputStream) {
+        require(self.markSupported())
 
-            inputThread.join()
-            outputThread.join()
-            errorThread.join()
+        val buffer = ByteArray(BUFFER_SIZE)
+
+        // we must synchronize on self because otherwise there could be a deadlock
+        // when another thread will would read from it
+        synchronized(self) {
+            while (true) {
+                self.mark(BUFFER_SIZE)
+
+                val wasRead = self.read(buffer)
+                if (wasRead <= 0) {
+                    break
+                }
+
+                var wasWrote = 0
+
+                // OutputStream.write(ByteArray) doesn't provide information
+                // about amount of written bytes, so we need to write them one by one
+                while (wasWrote < wasRead) {
+                    try {
+                        other.write(buffer[wasWrote].toInt())
+                        other.flush()
+                    } catch (e: IOException) {
+                        break
+                    }
+
+                    ++wasWrote
+                }
+
+                // if an exception occurred, restore trailing bytes and stop
+                if (wasWrote < wasRead) {
+                    self.reset()
+                    self.skip(wasWrote.toLong())
+                    break
+                }
+            }
         }
     }
 
