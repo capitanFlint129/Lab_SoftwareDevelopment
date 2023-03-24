@@ -26,7 +26,6 @@ class Parser(
             "echo" to ::EchoCommand,
             "wc" to ::WcCommand,
             "pwd" to ::PwdCommand,
-            "cd" to ::CdCommand,
             "exit" to ::ExitCommand,
         )
     }
