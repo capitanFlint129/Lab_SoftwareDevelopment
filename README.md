@@ -193,3 +193,44 @@ java -jar <путь до>/shellin-{version}-jar-with-dependencies.jar
 ```bash
 java -jar target/shellin-1.0-SNAPSHOT-jar-with-dependencies.jar
 ```
+
+### Задание 4. Grep
+
+#### Выбор библиотеки для разбора аргументов командной строки
+
+Найденные варианты:
+
+- [kotlin-argparser](https://github.com/xenomachina/kotlin-argparser)
+- [Apache Commons CLI](https://commons.apache.org/proper/commons-cli/usage.html)
+- [Argparse4j](https://argparse4j.github.io/)
+- [arguments-parser](https://github.com/silentsoft/arguments-parser)
+
+Первая библиотека рассчитана на Kotlin, остальные на Java. Других Kotlin-специфичных библиотек найти не получилось.
+
+##### kotlin-argparser
+
+Библиотека предоставляет удобный Kotlin-специфичный API, продемонстрированный в README.
+При поиске вариантов библиотек для Kotlin не было найдено никакой другой библиотеки, кроме этой.
+Причём, было очень много статей про именно эту библиотеку.
+470 звёзд на GitHub на момент анализа.
+
+Из минусов: давно обновлялась, последний коммит от 2020 года.
+
+##### Apache Commons CLI
+
+Популярная библиотека для разбора аргументов на Java. Удобный API, но рассчитанный на Java, а не на Kotlin.
+Регулярно обновляется, тысячи использований: в [Maven](https://mvnrepository.com/artifact/commons-cli/commons-cli).
+
+##### Argparse4j
+
+Последняя версия 0.9.0, так и не вышла в релиз.
+
+##### arguments-parser
+
+Судя по README, предоставляется только самый базовый API. Не больше, чем кустарная поделка.
+Хотя и недавно обновлялась. Всего две звезды на GitHub. Нет информации об использованиях в Maven.
+
+##### Итог
+
+Серьёзных варианта только два: kotlin-argparser и Apache Commons CLI. Но, учитывая (возможно, кажущуюся) популярность
+и удобство предоставляемого API, выбор пал на kotlin-argparser.
