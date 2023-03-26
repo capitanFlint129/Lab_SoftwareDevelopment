@@ -21,6 +21,9 @@ fun main() {
 
         val command = try {
             parser.parse(input) ?: continue
+        } catch (e: IllegalArgumentException) {
+            error.println("Malformed command: ${e.localizedMessage}")
+            continue
         } catch (e: IOException) {
             state.stop()
             continue

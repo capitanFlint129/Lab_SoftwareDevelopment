@@ -39,6 +39,7 @@ class Parser(
      * @param input input stream to read from
      * @return command or `null` if no command presented
      * @throws EOFException if no line in input
+     * @throws IllegalArgumentException if first line is malformed command
      */
     fun parse(input: BufferedInputStream): Command? {
         val line = readLine(input) ?: throw EOFException()
@@ -104,6 +105,7 @@ class Parser(
      * Commands in pipeline could be empty lists.
      *
      * @return list of pipeline commands, that is list of command name and arguments
+     * @throws IllegalArgumentException if line is malformed
      */
     private fun prepareLine(line: String): List<List<String>> {
         val chunks = mutableListOf(mutableListOf<String>())
@@ -173,9 +175,13 @@ class Parser(
             currentChunk.append(c)
         }
 
+        if (quotesWasInChunk) {
+            throw IllegalArgumentException("unmatched quote $quote")
+        }
+
         // we assume that line has EOL at the end
-        // so that all chunks was already add to the list
-        require(!quotesWasInChunk && currentChunk.isBlank())
+        // so that all chunks was already added to the list
+        require(currentChunk.isBlank())
         return chunks
     }
 
