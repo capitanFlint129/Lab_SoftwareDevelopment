@@ -1,10 +1,8 @@
 name: build
 
 on:
-  # push:
-  #   branches: [ lab1-dev-1 ]
   pull_request:
-    branches: [ master ]
+    branches: [ lab1 ]
 
   workflow_dispatch:
 
