@@ -7,6 +7,7 @@ import java.io.PrintStream
 import java.nio.file.AccessDeniedException
 import java.nio.file.Files
 import java.nio.file.NoSuchFileException
+import kotlin.io.path.isDirectory
 
 
 /**
@@ -29,7 +30,7 @@ class LsCommand(
         val path = if (args.size == 2) state.pwd.resolve(args[1]) else state.pwd
 
         try {
-            Files.walk(path, 1).forEach { output.println(it.fileName) }
+            Files.walk(path, 1).forEach { if (!it.isDirectory() || it.fileName != path.fileName) output.println(it.fileName) }
         } catch (e: NoSuchFileException) {
             error.println("File not found: \"$path\".")
         } catch (e: AccessDeniedException) {
